@@ -9,7 +9,7 @@ namespace Combinators
     
     public static class Combinator
     {
-        public static T Identity<T>(T x) => x;
+        public static Func<T, T> Identity<T>() => x => x;
         
         public static Func<dynamic, T> Constant<T>(T x) => _ => x;
 

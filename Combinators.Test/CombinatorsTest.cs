@@ -11,7 +11,7 @@ namespace Combinators.Test
         public void TestIdentity()
         {
             Prop
-                .ForAll<object>(input => input == input.Thrush(Combinator.Identity))
+                .ForAll<object>(input => input == input.Thrush(Combinator.Identity<object>()))
                 .QuickCheckThrowOnFailure();
         }
 
@@ -39,7 +39,7 @@ namespace Combinators.Test
         {
             Prop
                 .ForAll<object>(input => 
-                    input == Combinator.Thrush<object, object>(input)(Combinator.Identity)
+                    input == Combinator.Thrush<object, object>(input)(Combinator.Identity<object>())
                 ).QuickCheckThrowOnFailure();
         }
 
