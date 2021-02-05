@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Combinators", "Combinators\Combinators.csproj", "{2C8F6AA9-A5B6-4C3A-96C7-ECCC4D7D6518}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Combinators.Test", "Combinators.Test\Combinators.Test.csproj", "{0A7E70A4-DBF3-46CC-B2B4-01E0E6030F66}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C8F6AA9-A5B6-4C3A-96C7-ECCC4D7D6518}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C8F6AA9-A5B6-4C3A-96C7-ECCC4D7D6518}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C8F6AA9-A5B6-4C3A-96C7-ECCC4D7D6518}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C8F6AA9-A5B6-4C3A-96C7-ECCC4D7D6518}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A7E70A4-DBF3-46CC-B2B4-01E0E6030F66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A7E70A4-DBF3-46CC-B2B4-01E0E6030F66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A7E70A4-DBF3-46CC-B2B4-01E0E6030F66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A7E70A4-DBF3-46CC-B2B4-01E0E6030F66}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
