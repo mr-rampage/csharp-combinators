@@ -91,19 +91,81 @@ namespace Combinators.Test
         [TestMethod]
         public void TestSubstitution()
         {
-            var calculateTax = new Func<double, double>(price => price * 0.15);
-            var calculateTotal = new Func<double, Func<double, double>>(tax => price => price + tax);
+            var calculateTax = new Func<Price, Tax>(price => new Tax(price.Value * 0.15));
+            var calculateTotal = new Func<Price, Func<Tax, double>>(price => tax => price.Value + tax.Value);
             var calculatePayment = Combinator.Substitution(calculateTotal)(calculateTax);
             Prop
                 .ForAll<double>(price =>
-                    (price * 1.15 - calculatePayment(price) < 10e-4)
+                    (price * 1.15 - calculatePayment(new Price(price)) < 10e-4)
                     .When(price is not double.NaN)
                     .When(price is not double.PositiveInfinity)
                     .When(price is not double.NegativeInfinity)
                     .When(price is not < 10e-4)
                     .When(price is not > 10e10)
                 ).QuickCheckThrowOnFailure();
+        }
+        
+        [TestMethod]
+        public void TestChain()
+        {
+            var calculateTax = new Func<Price, Tax>(price => new Tax(price.Value * 0.15));
+            var calculateTotal = new Func<Tax, Func<Price, double>>(tax => price => price.Value + tax.Value);
+            var calculatePayment = Combinator.Chain(calculateTotal)(calculateTax);
+            Prop
+                .ForAll<double>(price =>
+                    (price * 1.15 - calculatePayment(new Price(price)) < 10e-4)
+                    .When(price is not double.NaN)
+                    .When(price is not double.PositiveInfinity)
+                    .When(price is not double.NegativeInfinity)
+                    .When(price is not < 10e-4)
+                    .When(price is not > 10e10)
+                ).QuickCheckThrowOnFailure();
+        }
 
+        [TestMethod]
+        public void TestConverge()
+        {
+            var calculateTax = new Func<double, Tax>(price => new Tax(price * 0.15));
+            var calculateDiscount= new Func<double, Discount>(price => new Discount(price * 0.1));
+            var calculateTotal = new Func<Discount, Func<Tax, double>>(d => t => d.Value + t.Value);
+            var calculatePayment = Combinator.Converge<double, Discount, Tax, double>(calculateTotal)(calculateDiscount)(calculateTax);
+            Prop
+                .ForAll<double>(price =>
+                    (price * 0.15 + price * 0.1 - calculatePayment(price) < 10e-4)
+                    .When(price is not double.NaN)
+                    .When(price is not double.PositiveInfinity)
+                    .When(price is not double.NegativeInfinity)
+                    .When(price is not < 10e-4)
+                    .When(price is not > 10e10)
+                ).QuickCheckThrowOnFailure();
+        }
+
+        [TestMethod]
+        public void TestPsi()
+        {
+            var money = new Func<double, Money>(value => new Money(value));
+            var calculateTotal = new Func<Money, Func<Money, Net>>(current => deduction => new Net(current.Value - deduction.Value));
+            var calculateNet = Combinator.Psi<double, Money, Net>(calculateTotal)(money);
+            
+            Prop
+                .ForAll<double>(price =>
+                    (price - 0.1 - calculateNet(price)(0.1).Value < 10e-4)
+                    .When(price is not double.NaN)
+                    .When(price is not double.PositiveInfinity)
+                    .When(price is not double.NegativeInfinity)
+                    .When(price is not < 10e-4)
+                    .When(price is not > 10e10)
+                ).QuickCheckThrowOnFailure();
         }
     }
+
+    internal record Money(double Value);
+
+    internal record Tax(double Value);
+
+    internal record Price(double Value);
+
+    internal record Discount(double Value);
+
+    internal record Net(double Value);
 }
