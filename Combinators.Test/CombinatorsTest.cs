@@ -1,4 +1,3 @@
-using System;
 using FsCheck;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -11,7 +10,7 @@ namespace Combinators.Test
         public void TestIdentity()
         {
             Prop
-                .ForAll<object>(input => input == input.Thrush(Combinators.Identity))
+                .ForAll<object>(input => input == input.Thrush(Combinator.Identity))
                 .QuickCheckThrowOnFailure();
         }
 
@@ -21,7 +20,7 @@ namespace Combinators.Test
             static object SideEffect(dynamic input) => input;
             
             Prop
-                .ForAll<object>(input => Combinators.Constant(true)(SideEffect(input)))
+                .ForAll<object>(input => Combinator.Constant(true)(SideEffect(input)))
                 .QuickCheckThrowOnFailure();
         }
 
@@ -30,7 +29,7 @@ namespace Combinators.Test
         {
             Prop
                 .ForAll<NonNull<object>>(input => 
-                    input.GetType() == input.Thrush(Combinators.Apply((object x) => x.GetType()))
+                    input.GetType() == input.Thrush(Combinator.Apply((object x) => x.GetType()))
                 ).QuickCheckThrowOnFailure();
         }
 
@@ -39,7 +38,7 @@ namespace Combinators.Test
         {
             Prop
                 .ForAll<object>(input => 
-                    input == Combinators.Thrush<object, object>(input)(Combinators.Identity)
+                    input == Combinator.Thrush<object, object>(input)(Combinator.Identity)
                 ).QuickCheckThrowOnFailure();
         }
 
@@ -49,19 +48,20 @@ namespace Combinators.Test
             Prop
                 .ForAll<NonNull<object>>(input =>
                     input + input.ToString() ==
-                    input.Thrush(Combinators.Duplication<object, string>(a => b => a.ToString() + b))
+                    input.Thrush(Combinator.Duplication<object, string>(a => b => a.ToString() + b))
                 ).QuickCheckThrowOnFailure();
         }
 
         [TestMethod]
         public void TestFlip()
         {
-            static string SideEffect(dynamic input) => input.ToString();
-            var tee = Combinators.Flip<object, string, object>(Combinators.Constant);
+            var tee = Combinator.Flip<object, string, object>(Combinator.Constant);
             Prop
-                .ForAll<NonNull<object>>(input => 
-                    input.Equals(input.Thrush(tee(SideEffect(input)))))
-                .QuickCheckThrowOnFailure();
+                .ForAll<NonNull<object>>(input =>
+                {
+                    var sideEffect = Combinator.Thrush<object, string>(input);
+                    return input.Equals(input.Thrush(tee(sideEffect(x => x.ToString()))));
+                }).QuickCheckThrowOnFailure();
         }
     }
 }

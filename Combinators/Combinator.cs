@@ -7,7 +7,7 @@ namespace Combinators
         public static T2 Thrush<T1, T2>(this T1 x, Func<T1, T2> f) => f(x);
     }
     
-    public static class Combinators
+    public static class Combinator
     {
         public static T Identity<T>(T x) => x;
         
