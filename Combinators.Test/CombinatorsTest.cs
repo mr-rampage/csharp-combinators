@@ -11,7 +11,15 @@ namespace Combinators.Test
         public void TestIdentity()
         {
             Prop
-                .ForAll<object>(input => input == input.Thrush(Combinator.Identity<object>()))
+                .ForAll<NonNull<object>>(input => 
+                    Combinator.Identity<Type>()(input.GetType()) == Combinator.Identity<object>()(input).GetType())
+                .Label("Should be commutative and associative")
+                .QuickCheckThrowOnFailure();
+            
+            Prop
+                .ForAll<object>(input => 
+                    Combinator.Identity<object>()(Combinator.Identity<object>()(input)) == input)
+                .Label("Should be idempotent")
                 .QuickCheckThrowOnFailure();
         }
 
